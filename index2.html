@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Education</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #e6f0ff;
+      padding: 20px;
+      color: #003366;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      background: url('logo.png') no-repeat center center;
+      background-size: 300px;
+      opacity: 0.06;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+    .screen { display: none; }
+    .active { display: block; }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background: #0a74da;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    select, input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .agenda {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border: 2px solid #0a74da;
+      border-radius: 10px;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .calendar div {
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      position: relative;
+      font-size: 14px;
+    }
+    .main-option {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 180px;
+    }
+    .main-box {
+      width: 45%;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url('https://source.unsplash.com/featured/?education');
+      background-size: cover;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .session-boxes {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+    .session-box {
+      width: 45%;
+      padding: 30px;
+      background: #003366;
+      color: white;
+      font-size: 20px;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .calendar .link-button {
+      margin-top: 5px;
+      font-size: 12px;
+      padding: 5px;
+      background-color: #0a74da;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .info-box {
+      margin-top: 20px;
+      padding: 20px;
+      border: 2px dashed #0a74da;
+      background-color: #f9f9ff;
+      border-radius: 10px;
+      font-size: 16px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .score-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .score-options div {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .score-options .selected {
+      border: 2px solid #0a74da;
+      background: #dbe9ff;
+    }
+  </style>
+</head>
+<body>
+    <div id="main-menu" class="screen active">
+        <h2>أهلاً بك في Apex Education</h2>
+        <div class="main-option">
+          <div class="main-box" onclick="showScreen('teacher-dashboard')">معلم</div>
+          <div class="main-box" onclick="showScreen('student-screen')">طالب / ولى أمر</div>
+        </div>
+      </div>
+    
+      <div id="teacher-dashboard" class="screen">
+        <h2>لوحة تحكم المعلم</h2>
+        <input type="text" id="teacher-name-input" placeholder="اكتب اسمك هنا">
+        <label>اختر قيمة البادج:</label>
+        <select id="badge-value">
+          <option value="30">30 نقطة</option>
+          <option value="50">50 نقطة</option>
+          <option value="100">100 نقطة</option>
+          <option value="150">150 نقطة</option>
+          <option value="250">250 نقطة</option>
+          <option value="300">300 نقطة</option>
+        </select>
+        <label>عدد النقاط:</label>
+        <select id="points-value">
+          <option value="30">30 نقطة</option>
+          <option value="50">50 نقطة</option>
+          <option value="100">100 نقطة</option>
+          <option value="150">150 نقطة</option>
+          <option value="250">250 نقطة</option>
+          <option value="300">300 نقطة</option>
+        </select>
+        <label>التقييم من 10:</label>
+        <div class="score-options" id="score-options"></div>
+        <button onclick="submitBadge()">حفظ البيانات</button>
+        <br><button onclick="showScreen('main-menu')">رجوع</button>
+      </div>
+    
+      <div id="student-screen" class="screen">
+        <h2>أدخل اسمك لعرض بياناتك:</h2>
+        <input type="text" id="student-name" placeholder="اكتب اسمك هنا">
+        <button onclick="showStudentAgenda()">عرض</button>
+      </div>
+    
+      <div id="student-agenda" class="screen">
+        <h3 id="student-greeting"></h3>
+        <div class="session-boxes">
+          <div class="session-box" onclick="showAgenda('virtual')">الجلسات الافتراضية</div>
+          <div class="session-box" onclick="showAgenda('practical')">الجلسات التطبيقية</div>
+        </div>
+        <div id="agenda-container"></div>
+        <br><button onclick="showScreen('main-menu')">رجوع</button>
+      </div>
+    
+      <script>
+        function showScreen(id) {
+          document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+          document.getElementById(id).classList.add('active');
+        }
+    
+        let teacherName = "";
+        let badge = 0;
+        let points = 0;
+        let score = "";
+        let badgeCount = 0;
+    
+        const scoreContainer = document.getElementById("score-options");
+        for (let i = 0.5; i <= 10; i += 0.5) {
+          const div = document.createElement("div");
+          div.innerText = i;
+          div.onclick = () => {
+            document.querySelectorAll(".score-options div").forEach(el => el.classList.remove("selected"));
+            div.classList.add("selected");
+            document.getElementById("score-value")?.remove();
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.id = "score-value";
+            hidden.value = i;
+            scoreContainer.appendChild(hidden);
+          };
+          scoreContainer.appendChild(div);
+        }
+    
+        function submitBadge() {
+          teacherName = document.getElementById("teacher-name-input").value;
+          badge = parseInt(document.getElementById("badge-value").value);
+          points = parseInt(document.getElementById("points-value").value);
+          score = document.getElementById("score-value")?.value || "";
+          if (badge !== points) return alert("النقاط لا تساوي قيمة البادج!");
+          badgeCount = 1;
+          alert("تم حفظ البيانات بنجاح!");
+          showScreen('main-menu');
+        }
+    
+        function showStudentAgenda() {
+          const name = document.getElementById("student-name").value;
+          document.getElementById("student-greeting").innerText = `أهلاً ${name}\nعدد البادجات: ${badgeCount}\nعدد النقاط: ${points}\nالتقييم: ${score}\nاسم المعلم: ${teacherName}`;
+          showScreen('student-agenda');
+        }
+    
+        function showAgenda(type) {
+          const agenda = document.getElementById("agenda-container");
+          agenda.innerHTML = '<div class="agenda"><h3>أجندة الشهر:</h3><div class="calendar">' +
+            Array.from({length: 30}, (_, i) => {
+              const day = i + 1;
+              const d = new Date(2025, 6, day);
+              const weekdays = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+              const dayName = weekdays[d.getDay()];
+              const show = (type === 'virtual' && dayName === 'السبت') || (type === 'practical' && dayName === 'السبت' && day > 24);
+              return `<div>${day}<br>${dayName}${show ? `<br><button class='link-button' onclick=\"showSessionMessage('${type}', ${day}, '${dayName}')\">عرض</button>` : ''}</div>`;
+            }).join('') + '</div><div id="session-message"></div></div>';
+        }
+    
+        function showSessionMessage(type, day, name) {
+          const msg = type === 'virtual' ?
+            `لديك جلسة اونلاين يوم ${day} ${name} الساعة 10 صباحًا مع المدربين رجب شعبان، عمر هاشم، ورغد أيمن` :
+            `لديك جلسة تطبيقية يوم ${day} ${name} الساعة 10 صباحًا مع المدربين رجب شعبان، عمر هاشم، ورغد أيمن`;
+          document.getElementById("session-message").innerHTML = `<div class='info-box'>${msg}</div>`;
+        }
+      </script>
+</body>
+</html>
